@@ -1,4 +1,18 @@
 ﻿/* Put css styles in here */
+
+.ttip {
+  background: #fff;
+  box-shadow: 0 0 5px #999999;
+  -webkit-box-shadow: 1px 2px 6px rgba(0,0,0, 0.5);
+  pointer-events: none;
+  padding: 7px;
+  text-align:right;
+  opacity:0.8;
+  border-radius: 4px;
+  border: 1px solid #ffffff
+}
+
+
 .node rect {
   cursor: crosshair
   fill-opacity: .9;
