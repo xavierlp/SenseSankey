@@ -1,8 +1,7 @@
 requirejs.config({
   shim : {
     "extensions/SenseSankey/sankeymore" : {
-      deps : ["extensions/SenseSankey/d3.min"],
-	  exports: 'd3.sankey'
+      deps : ["extensions/SenseSankey/d3.min"]
     }
   }
 });
@@ -412,7 +411,7 @@ define(
 			
 			var svg = d3.select("#sk_" + divName).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 		  
-			var sankey = d3.sankey().nodeWidth(15).nodePadding(10).size([width -10 , height-10]);
+			var sankey = senseSankey().nodeWidth(15).nodePadding(10).size([width -10 , height-10]);
 			var path = sankey.link();
 		 
 		
