@@ -30,8 +30,8 @@ define(
 					qDimensions: [],
 					qMeasures: [],
 					qInitialDataFetch: [{
-						qWidth: 5,
-						qHeight: 2000
+	                    qWidth: 25,
+	                    qHeight: 400
 					}]
 				},
 				selectionMode: "QUICK"
@@ -42,8 +42,9 @@ define(
 				items: {
 					dimensions: {
 						uses: "dimensions",
-						min: 2,
-						max: 4				},
+	                    min: 1,
+	                    max: 24
+	                },
 					measures: {
 						uses: "measures",
 						min: 1,
@@ -95,8 +96,8 @@ define(
 										label:"<->"
 										},
 										{
-										value: " → ",
-										label: " → "
+										value: " â†’ ",
+										label: " â†’ "
 										},
 									],
 									defaultValue: " - "
@@ -127,7 +128,7 @@ define(
 									type: "string",
 									label: "Currency Symbol",
 									ref: "currencySymbol",
-									defaultValue: "€"
+									defaultValue: "â‚¬"
 									},
 										
 								Palette:{
@@ -288,7 +289,6 @@ define(
 			}
 					
 			return {
-				  //"Path":d[0].qText,
 				  "Path": path,
 				  "Frequency": d[d.length - 1].qNum
 				}
@@ -322,7 +322,7 @@ define(
 			  var path = d.Path;
 			  var val = parseFloat(d.Frequency);
 			  if(val > 0) {
-				var tArr = path.split(",",4);  
+	                    var tArr = path.split(",");
 				//tArr.sort();
 				if (rev == "1") {
 					tArr.reverse();
@@ -465,7 +465,7 @@ define(
 			})
 			
 			node.on("click",function(d, i) {
-				//on passe a la fonction l'identifiant qElement precedemment stocké dans le nom et le nom de la dimension sous forme d'un tableau
+				//on passe a la fonction l'identifiant qElement precedemment stockÃ© dans le nom et le nom de la dimension sous forme d'un tableau
 				
 				_this.backendApi.selectValues(
 					parseInt(d.name.split('~')[1].replace('end', qDim.length - 1)),
@@ -500,7 +500,7 @@ define(
 			  return d.x < width / 2;
 			}).attr("x", 6 + sankey.nodeWidth()).attr("text-anchor", "start");
 			
-			// AVEC POPUP sur le carré de couleur
+			// AVEC POPUP sur le carrÃ© de couleur
 			node.append("rect").attr("height", function(d) {
 			  return d.dy;
 			}).attr("width", sankey.nodeWidth()).style("fill", function(d) {
@@ -514,7 +514,7 @@ define(
 			node.on("mouseover", function(d){
 				var level = d.name.substr(d.name.indexOf("~")+1,1);
 				var edgeMargin= 0; //Last nodes might not have enough space for the tooltip, so we add a negative margin to push the tooltip on the left
-				// test si on est à la fin du flux ou pas
+				// test si on est Ã  la fin du flux ou pas
 				if (level === "e" ){
 					level = qDim.length -1;
 					edgeMargin=-80;
@@ -528,7 +528,7 @@ define(
 			.on("mousemove", function(d){
 				var edgeMargin= 0;
 				var level = d.name.substr(d.name.indexOf("~")+1,1);
-				// test si on est à la fin du flux ou pas
+				// test si on est Ã  la fin du flux ou pas
 				if (level === "e" ){
 					level = qDim.length -1;
 					edgeMargin=-80;
