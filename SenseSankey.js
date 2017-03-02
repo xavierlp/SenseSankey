@@ -30,8 +30,8 @@ define(
 					qDimensions: [],
 					qMeasures: [],
 					qInitialDataFetch: [{
-						qWidth: 5,
-						qHeight: 2000
+	                    qWidth: 25,
+	                    qHeight: 400
 					}]
 				},
 				selectionMode: "QUICK"
@@ -42,8 +42,9 @@ define(
 				items: {
 					dimensions: {
 						uses: "dimensions",
-						min: 2,
-						max: 4				},
+	                    min: 1,
+	                    max: 24
+	                },
 					measures: {
 						uses: "measures",
 						min: 1,
@@ -95,8 +96,8 @@ define(
 										label:"<->"
 										},
 										{
-										value: " → ",
-										label: " → "
+                                                value: " → ",
+                                                label: " → "
 										},
 									],
 									defaultValue: " - "
@@ -127,7 +128,7 @@ define(
 									type: "string",
 									label: "Currency Symbol",
 									ref: "currencySymbol",
-									defaultValue: "€"
+	                                    defaultValue: "€"
 									},
 										
 								Palette:{
@@ -288,7 +289,6 @@ define(
 			}
 					
 			return {
-				  //"Path":d[0].qText,
 				  "Path": path,
 				  "Frequency": d[d.length - 1].qNum
 				}
@@ -322,7 +322,7 @@ define(
 			  var path = d.Path;
 			  var val = parseFloat(d.Frequency);
 			  if(val > 0) {
-				var tArr = path.split(",",4);  
+	                    var tArr = path.split(",");
 				//tArr.sort();
 				if (rev == "1") {
 					tArr.reverse();
@@ -419,7 +419,22 @@ define(
 
 			sankey.nodes(jNodes).links(sLinks).layout(32);
 			
-			var link = svg.append("g").selectAll(".link").data(sLinks).enter().append("path").attr("class", "link").attr("d", path).style("stroke-width",function(d) {
+	            var link = svg.append("g").selectAll(".link").data(sLinks).enter()
+				
+				.append("path")
+				
+				.filter(function(d){
+					var start = d.source.name.split('|')[0];
+                    var end = d.target.name.split('|')[0];
+					if(start == '-' || end == '-'){
+						return;
+					} else {
+						return d;
+					}
+				})
+				.attr("class", "link").attr("d", path)
+				
+				.style("stroke-width", function (d) {
 			  return Math.max(1, d.dy);
 			}).sort(function(a, b) {
 			  return b.dy - a.dy;
@@ -447,7 +462,8 @@ define(
 					var targetValue = formatNumber(displayFormat,d.value,'',currencySymbol);
 					
 					tooltip.html("<b>"+start+"</b>"+displaySeparateur+"<b>"+end+"</b><br/>"+targetValue);			
-					return tooltip.style("visibility", "visible");})
+	                return tooltip.style("visibility", "visible");
+	            })
 				.on("mousemove", function(d){
 					var start = d.source.name.split('|')[0];
 					var end = d.target.name.split('|')[0];
@@ -460,12 +476,27 @@ define(
 				});
 			
 			var node = svg
-			.append("g").selectAll(".node").data(jNodes).enter().append("g").attr("class", "node").attr("transform", function(d) {
+                .append("g").selectAll(".node").data(jNodes).enter().append("g")
+				
+				.filter(function(d){
+					var start = d.name.split('|')[0];
+                    var end = d.name.split('|')[0];
+					if(start == '-' && end == '-'){
+						return;
+					} else {
+						return d;
+					}
+				})
+				
+				.attr("class", "node")
+				
+				
+				.attr("transform", function (d) {
 			  return "translate(" + d.x + "," + d.y + ")";
 			})
 			
 			node.on("click",function(d, i) {
-				//on passe a la fonction l'identifiant qElement precedemment stocké dans le nom et le nom de la dimension sous forme d'un tableau
+				//on passe a la fonction l'identifiant qElement precedemment stockÃ© dans le nom et le nom de la dimension sous forme d'un tableau
 				
 				_this.backendApi.selectValues(
 					parseInt(d.name.split('~')[1].replace('end', qDim.length - 1)),
@@ -500,7 +531,7 @@ define(
 			  return d.x < width / 2;
 			}).attr("x", 6 + sankey.nodeWidth()).attr("text-anchor", "start");
 			
-			// AVEC POPUP sur le carré de couleur
+	            // AVEC POPUP sur le carré de couleur
 			node.append("rect").attr("height", function(d) {
 			  return d.dy;
 			}).attr("width", sankey.nodeWidth()).style("fill", function(d) {
@@ -514,7 +545,7 @@ define(
 			node.on("mouseover", function(d){
 				var level = d.name.substr(d.name.indexOf("~")+1,1);
 				var edgeMargin= 0; //Last nodes might not have enough space for the tooltip, so we add a negative margin to push the tooltip on the left
-				// test si on est à la fin du flux ou pas
+	                // test si on est à la fin du flux ou pas
 				if (level === "e" ){
 					level = qDim.length -1;
 					edgeMargin=-80;
@@ -528,7 +559,7 @@ define(
 			.on("mousemove", function(d){
 				var edgeMargin= 0;
 				var level = d.name.substr(d.name.indexOf("~")+1,1);
-				// test si on est à la fin du flux ou pas
+                    // test si on est à la fin du flux ou pas
 				if (level === "e" ){
 					level = qDim.length -1;
 					edgeMargin=-80;
