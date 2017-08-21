@@ -1,9 +1,9 @@
 requirejs.config({
   shim : {
-    "extensions/SenseSankey/sankeymore" : {
-      deps : ["extensions/SenseSankey/d3.min"],
+	"extensions/SenseSankey/sankeymore" : {
+	  deps : ["extensions/SenseSankey/d3.min"],
 	  exports: 'd3.sankey'
-    }
+	}
   }
 });
 
@@ -175,6 +175,80 @@ define(
 										  translation: "properties.off"
 										},
 										show: true
+									},
+									useImage:{
+										ref: "useImage",
+										component: "switch",
+										type: "boolean",
+										translation: "Use image",
+										defaultValue: false,
+										trueOption: {
+										  value: true,
+										  translation: "properties.on"
+										},
+										falseOption: {
+										  value: false,
+										  translation: "properties.off"
+										},
+										show: true
+									},
+									imageRight:{
+										ref: "imageRight",
+										component: "switch",
+										type: "boolean",
+										label: "Image Right",
+										translation: "Use image right",
+										defaultValue: true,
+										trueOption: {
+										  value: true,
+										  translation: "properties.on"
+										},
+										falseOption: {
+										  value: false,
+										  translation: "properties.off"
+										},
+										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
+									},
+									imageLeft:{
+										ref: "imageLeft",
+										component: "switch",
+										type: "boolean",
+										label: "Image Left",
+										translation: "Use image left",
+										defaultValue: true,
+										trueOption: {
+										  value: true,
+										  translation: "properties.on"
+										},
+										falseOption: {
+										  value: false,
+										  translation: "properties.off"
+										},
+										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
+									},
+									urlImage:{
+										ref: "urlImage",
+										type: "string",
+										label: "Place your url here: ",
+										expression: "optional",
+										defaultValue: "",
+										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
+									},
+									urlImageDesc:{
+										ref: "urlImageDesc",
+										type: "string",
+										component: "text",
+										label: "Note: Full URL Online or Content libraries and remame image with a same name of measures.",
+										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
+									},
+									sizeImage:{
+										ref: "sizeImage",
+										type: "integer",
+										label: "Image width & height (px)",
+										defaultValue: 80,
+										min : 10,
+										max : 100,
+										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
 									}
 								}
 							}
@@ -235,15 +309,21 @@ define(
 				}
 				}
 					
-			  var _this = this;
+			  var _this 			= this;
 			  var maxHeight         = layout.flowMax;
 			  var displayFormat     = layout.displayFormat;
 			  var currencySymbol	= " " + layout.currencySymbol;
 			  var displaySeparateur = layout.displaySeparateur;
 			  var displayPalette    = layout.displayPalette;
 			  var colorPersistence  = layout.colorPersistence;
-			  var offset = $element.offset();
-			  
+			  var useImage  		= layout.useImage;
+			  var imageRight		= layout.imageRight;
+			  var imageLeft			= layout.imageLeft;
+			  var urlImage  		= layout.urlImage;
+			  var urlImageDesc  	= layout.urlImageDesc;
+			  var sizeImage			= layout.sizeImage;
+			  var offset 			= $element.offset();
+
 			 if (displayPalette === "D3-20") {
 				var colours = ['#1f77b4','#aec7e8','#ff7f0e','#ffbb78','#2ca02c','#98df8a','#d62728','#ff9896','#9467bd','#c5b0d5','#8c564b',
 								'#c49c94','#e377c2','#f7b6d2','#7f7f7f','#c7c7c7','#bcbd22','#dbdb8d','#17becf','#9edae5' ];
@@ -402,20 +482,52 @@ define(
 			}
 			});
 		
-		  
+		  // Ajuste le graph si image droite ou gauche
+		  if(useImage == true) {
+			if(imageRight == true && imageLeft == true) {
+				var marginRight 		= sizeImage;
+				var marginLeft 			= sizeImage;
+				var widthGraph 			= $element.width() - 115;
+				var senseSankeyWidth 	= 40;
+			}
+			if(imageRight == false && imageLeft == true) {
+				var marginRight 		= 1;
+				var marginLeft 			= sizeImage;
+				var widthGraph 			= $element.width() - 35;
+				var senseSankeyWidth 	= 40;
+			}
+			if(imageRight == true && imageLeft == false) {
+				var marginRight 		= sizeImage;
+				var marginLeft 			= 1;
+				var widthGraph 			= $element.width() - 35;
+				var senseSankeyWidth 	= 40;
+			}
+			if(imageRight == false && imageLeft == false) {
+				var marginRight 		= 1;
+				var marginLeft 			= 1;
+				var widthGraph 			= $element.width();
+				var senseSankeyWidth 	= 10;
+			}
+		  } else {
+				var marginRight 		= 1;
+				var marginLeft 			= 1;
+				var widthGraph 			= $element.width();
+				var senseSankeyWidth 	= 10;
+		  }
+
 		  var margin = {
 			  top : 1,
-			  right : 1,
+			  right : marginRight,
 			  bottom : 0,
-			  left : 1
-			}, width = $element.width(), height = $element.height();
+			  left : marginLeft
+			}, 
+			width = widthGraph, 
+			height = $element.height();
 			
 			var svg = d3.select("#sk_" + divName).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 		  
-			var sankey = senseSankey().nodeWidth(15).nodePadding(10).size([width -10 , height-10]);
+			var sankey = senseSankey().nodeWidth(15).nodePadding(10).size([width - senseSankeyWidth , height - 10]);
 			var path = sankey.link();
-		 
-		
 
 			sankey.nodes(jNodes).links(sLinks).layout(32);
 			
@@ -461,7 +573,7 @@ define(
 			
 			var node = svg
 			.append("g").selectAll(".node").data(jNodes).enter().append("g").attr("class", "node").attr("transform", function(d) {
-			  return "translate(" + d.x + "," + d.y + ")";
+			  return "translate(" + (d.x) + "," + d.y + ")";
 			})
 			
 			node.on("click",function(d, i) {
@@ -487,14 +599,12 @@ define(
 				);	
 				$('.ttip').remove(); //remove tooltip object on click.
 			});		
-			
 						
 			//dessin du noeud
 			node.append("text").attr("class", "nodeTitle").attr("x", -6).attr("y", function(d) {
 				  return d.dy / 2;
 			}).attr("dy", ".35em").attr("text-anchor", "end").attr("transform", null).text(function(d) {
 			  var str = d.name.substring(0, d.name.indexOf("~")).split('|')[0];
-			  //console.log(str);
 			  return str 
 			}).filter(function(d) {
 			  return d.x < width / 2;
@@ -510,6 +620,28 @@ define(
 			  return d3.rgb(d.color).darker(2);
 			});
 			
+			// Dessine les images
+			if(useImage == true && (imageLeft == true || imageRight == true)) {
+				node.append("image")
+					.attr("xlink:href", function(d) {
+						var nameImage = d.name.substring(0, d.name.indexOf("~")).split('|')[0];
+						return urlImage + nameImage + ".png";
+					})
+					.attr("style", "background-color: transparent; opacity: 1;")
+					.attr("height", sizeImage + "px")
+					.attr("width",  sizeImage + "px")
+					.attr("x", sizeImage / 4)
+					.attr("y", function(d) {
+						return d.dy / 2 - (sizeImage / 2);
+					})
+					.attr("text-anchor", "end")
+					.filter(function(d) {
+						return d.x < sizeImage + 15;
+					})
+					.attr("x", sankey.nodeWidth() - (sizeImage + 17))
+					.attr("text-anchor", "start");
+			}
+
 			//Node tooltip
 			node.on("mouseover", function(d){
 				var level = d.name.substr(d.name.indexOf("~")+1,1);
