@@ -25,7 +25,7 @@ define(
 		$( "<style>" ).html( cssContent ).appendTo( "head" );
 		return {
 			initialProperties: {
-				version: 2.2,
+				version: 2.3,
 				qHyperCubeDef: {
 					qDimensions: [],
 					qMeasures: [],
