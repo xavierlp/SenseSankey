@@ -13,17 +13,25 @@ Original radar chart extension, developped by John Park : <a href="http://branch
 Mike Bostock's Sankey chart : <a href="http://bost.ocks.org/mike/sankey">here</a><br>
 D3.js
 
-V1.3 Add new option for persistent colors
+V2.31 Add Images at the start and then end of the flow
+		+ Manage 6 dimensions and more
+		
+![alt tag](images/sankeyphoto.png)
 
-V1.3.1 Correct data with commas + Choice of device symbol.
+
+V2.2 Correct the comma issue
+
+V2.1 Resolved conflict with other extensions made by Brixm 
+
+V2.0 New color Selection to be compatible with QlikSense 3.1 SR2 
 
 V1.4 add clickables links
 
-V2.0 New color Selection to be compatible with QlikSense 3.1 SR2
+V1.3.1 Correct data with commas + Choice of device symbol.
 
-V2.1 Resolved conflict with other extensions made by Brixm  
+V1.3 Add new option for persistent colors
 
-V2.2 Correct the comma issue
+
 
 ![alt tag](images/animation.gif)
 
