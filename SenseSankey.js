@@ -25,13 +25,13 @@ define(
 		$( "<style>" ).html( cssContent ).appendTo( "head" );
 		return {
 			initialProperties: {
-				version: 2.3,
+				version: 2.31,
 				qHyperCubeDef: {
 					qDimensions: [],
 					qMeasures: [],
 					qInitialDataFetch: [{
-						qWidth: 5,
-						qHeight: 2000
+						qWidth: 7,
+						qHeight: 1400
 					}]
 				},
 				selectionMode: "QUICK"
@@ -43,24 +43,26 @@ define(
 					dimensions: {
 						uses: "dimensions",
 						min: 2,
-						max: 4				},
+						max: 6				},
 					measures: {
 						uses: "measures",
 						min: 1,
-						max: 1
+						max: 3
 					},
 					//sorting: {
 					//	uses: "sorting"
 					//},
-					settings: {
-						uses: "settings",
-						type: "items",
+				
+								
+					SankeyGroup: {
+						label: "Sankey Settings v2.31",
+						component:"expandable-items",
 						items : {
-								SankeyGroup:{
-								label : "Sankey Settings v2.2",
-								type:"items",
-								items : {
-								flowMax:{
+							Flow:{
+							label : "Flow and Color",
+							type:"items",
+							items : {
+									flowMax:{
 									type: "integer",
 									label: "Flow max (10 to 2000)",
 									ref: "flowMax (max is 2000)",
@@ -176,38 +178,64 @@ define(
 										},
 										show: true
 									},
-									useImage:{
+								}	
+							},							
+							manageImages: {
+								type:"items",
+								label:"Images (beta)",
+													
+								items: {	
+									useImage: {
 										ref: "useImage",
-										component: "switch",
 										type: "boolean",
-										translation: "Use image",
+										label : "Image for 1st & last dimensions",
 										defaultValue: false,
-										trueOption: {
-										  value: true,
-										  translation: "properties.on"
 										},
-										falseOption: {
-										  value: false,
-										  translation: "properties.off"
-										},
-										show: true
-									},
-									imageRight:{
-										ref: "imageRight",
-										component: "switch",
+									useMeasure : {
+										ref: "useMeasure",
 										type: "boolean",
-										label: "Image Right",
-										translation: "Use image right",
+										component: "buttongroup",
+										label: "Dimension or Measure",
+										options: [
+										{
+											value: false,
+											label: "Dimensions",
+											tooltip: "1st and last dimensions will be used to build the image"
+										},
+										{
+											value: true,
+											label: "Measures",
+											tooltip: "2nd and 3rd Measure contain the image"
+										}],
 										defaultValue: true,
-										trueOption: {
-										  value: true,
-										  translation: "properties.on"
-										},
-										falseOption: {
-										  value: false,
-										  translation: "properties.off"
-										},
-										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
+										show : function(layout) {return layout.useImage}
+									},
+									
+									dimensionImageDescDim:{
+										ref: "dimensionImageDescD",
+										type: "string",
+										component: "text",
+										label: "1st and last dimensions will be used to build the image",
+										show: function(layout) { if( layout.useMeasure == true ){ return false } else { return true } }
+									},
+									dimensionImageDescMeasure:{
+										ref: "dimensionImageDescM",
+										type: "string",
+										component: "text",
+										label: "2nd and 3rd Measure contain the image",
+										show: function(layout) { if( layout.useMeasure == true ){ return true } else { return false } }
+									},
+									
+									extensionImage:{
+										ref:"extensionImage",
+										type: "string",
+										label: "Extension of the image file",
+										defaultValue: "png",
+										show: function(layout)  { if (layout.useImage) 
+													{ 
+												if (layout.useMeasure) { return false } else { return true } 
+												}
+										}
 									},
 									imageLeft:{
 										ref: "imageLeft",
@@ -226,21 +254,35 @@ define(
 										},
 										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
 									},
+									
+									imageRight:{
+										ref: "imageRight",
+										component: "switch",
+										type: "boolean",
+										label: "Image Right",
+										translation: "Use image right",
+										defaultValue: true,
+										trueOption: {
+										  value: true,
+										  translation: "properties.on"
+										},
+										falseOption: {
+										  value: false,
+										  translation: "properties.off"
+										},
+										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
+									},
+									
 									urlImage:{
 										ref: "urlImage",
 										type: "string",
-										label: "Place your url here: ",
+										label: "Full URL to online image folder",
 										expression: "optional",
 										defaultValue: "",
 										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
 									},
-									urlImageDesc:{
-										ref: "urlImageDesc",
-										type: "string",
-										component: "text",
-										label: "Note: Full URL Online or Content libraries and remame image with a same name of measures.",
-										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
-									},
+									
+									
 									sizeImage:{
 										ref: "sizeImage",
 										type: "integer",
@@ -249,17 +291,60 @@ define(
 										min : 10,
 										max : 100,
 										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
+									},
+									}
+							},
+								
+							managemoreDimension:{
+								type:"items",
+								label:"Manage 5 and more Dimensions",
+								items: {
+									moreDimension:{
+												ref: "moreDimension",
+												component: "switch",
+												type: "boolean",
+												label: "Manage more than 4 dimensions",
+												defaultValue: false,
+												trueOption: {
+												value: true,
+												
+												},
+												falseOption: {
+												value: false,
+												
+												},
+												show: true
+											},
+									descriptionSeparateur:{
+												ref: "separateur",
+												label: "Define the separator to use between dimensions i.e ([dimension4] & '§' & [dimension5] & '§' & [dimension6]",
+												type: "string",
+												component: "text",
+												show: function(layout) { return layout.moreDimension }
+											},
+									separateur:{
+												ref: "separateur",
+												label: "Add this separator",
+												//in the last dimension i.e ([dimension4] & '§' & [dimension5] & '§' & [dimension6]",
+												type: "string",
+												defaultValue: "§",
+												show: function(layout) { return layout.moreDimension }
+											}
 									}
 								}
 							}
-							
-						}
-					}
+					},
+					settings: {
+						uses: "settings"				
+					}	
 				}
 			},
 			snapshot: {
-				canTakeSnapshot: true
-			},
+						canTakeSnapshot: true
+					},
+				
+			
+			
 
 			paint: function ( $element, layout ) {
 				
@@ -310,19 +395,26 @@ define(
 				}
 					
 			  var _this 			= this;
-			  var maxHeight         = layout.flowMax;
+			  var maxHeight         = (layout.flowMax === undefined ? 500 : layout.flowMax);
+			  
 			  var displayFormat     = layout.displayFormat;
 			  var currencySymbol	= " " + layout.currencySymbol;
 			  var displaySeparateur = layout.displaySeparateur;
 			  var displayPalette    = layout.displayPalette;
 			  var colorPersistence  = layout.colorPersistence;
 			  var useImage  		= layout.useImage;
+			  var useMeasure		= (layout.useMeasure === undefined ? true : layout.useMeasure);
 			  var imageRight		= layout.imageRight;
 			  var imageLeft			= layout.imageLeft;
 			  var urlImage  		= layout.urlImage;
 			  var urlImageDesc  	= layout.urlImageDesc;
 			  var sizeImage			= layout.sizeImage;
+			  var extensionImage	= (layout.extensionImage === undefined ? "png" : layout.extensionImage);
+			  var dimImageRight		= (layout.dimImageRight === undefined ? "" : layout.dimImageRight);
 			  var offset 			= $element.offset();
+			  var separator			= (layout.separateur === undefined ? "§" : layout.separateur);
+			  var nbImageDrawn		= 0;
+			  
 
 			 if (displayPalette === "D3-20") {
 				var colours = ['#1f77b4','#aec7e8','#ff7f0e','#ffbb78','#2ca02c','#98df8a','#d62728','#ff9896','#9467bd','#c5b0d5','#8c564b',
@@ -356,24 +448,52 @@ define(
 				});
 			  
 			  
-			var divName = layout.qInfo.qId;
-			var qMatrix = qData.qMatrix.sort();
-			var source = qMatrix.map(function(d) {
+			var divName 	= layout.qInfo.qId;
+			var qMatrix 	= qData.qMatrix.sort();
+			var source 		= qMatrix.map(function(d) {
 				  
-			var path = ""; 
-			var sep = ""; 
-			for (var i = 0; i < d.length - 1; i++) {
+			var path 		= ""; 
+			var sep 		= ""; 
+			var nbDimension = 0;
+			var nbDimension = qDim.length;
+			var nbMesures 	= qMatrix[0].length- nbDimension;
+			var nbTotal 	= nbMesures+nbDimension;
+		//for (var i = 0; i < d.length - 1; i++) {
+			
+			for (var i = 0; i < nbDimension ; i++) {
 				path += sep + (d[i].qText.replace('|', ' ')) + '|' + (d[i].qElemNumber); 
-				sep = "§";
+				sep = separator;
 			}
-					
-			return {
-				  //"Path":d[0].qText,
-				  "Path": path,
-				  "Frequency": d[d.length - 1].qNum
+			
+						
+			switch (nbMesures)
+			{
+				case 3: 
+				return {
+					"Path": path,
+					"Frequency": d[nbDimension].qNum,
+					"Photogauche": d[nbTotal-2].qText,
+					"Photodroite": d[nbTotal-1].qText
+					}
+				break;	
+				case 2:
+				return {
+					"Path": path,
+					"Frequency": d[nbDimension].qNum,
+					"Photogauche": d[nbTotal-1].qText
 				}
-			   });
-			  var id = "sk_"+ layout.qInfo.qId;
+				break;
+				default:
+				return {
+					"Path": path,
+					"Frequency": d[nbDimension].qNum
+				}
+			}
+				
+			});
+			
+
+			var id = "sk_"+ layout.qInfo.qId;
 					  
 			  if (document.getElementById(id)) {
 				 $("#" + id).empty();
@@ -402,7 +522,7 @@ define(
 			  var path = d.Path;
 			  var val = parseFloat(d.Frequency);
 			  if(val > 0) {
-				var tArr = path.split("§",4);  
+				var tArr = path.split(separator);  
 				//tArr.sort();
 				if (rev == "1") {
 					tArr.reverse();
@@ -436,8 +556,14 @@ define(
 			  //var row = d;
 			  var path = d.Path
 			  var val = parseFloat(d.Frequency);
+			  
+			  if (useMeasure == true) {
+				   var photog = d.Photogauche;
+				   var photod = d.Photodroite;
+			  }
+			 
 			  if(val > 0) {
-			  var tArr = path.split("§");  
+			  var tArr = path.split(separator);  
 		  
 			  if (rev == "1") {
 				tArr.reverse();
@@ -468,7 +594,16 @@ define(
 
 								}
 							});
-							if (tFlag == "no") {
+							if ((tFlag == "no") &&  (useMeasure == true)) {
+								sLinks.push({
+									"source" : cS,
+									"target" : cT,
+									"value" : val,
+									"Photogauche" : photog,
+									"Photodroite" : photod
+								});
+							}
+							if ((tFlag == "no") &&  (useMeasure == false)) {
 								sLinks.push({
 									"source" : cS,
 									"target" : cT,
@@ -481,7 +616,8 @@ define(
 				}
 			}
 			});
-		
+			
+				
 		  // Ajuste le graph si image droite ou gauche
 		  if(useImage == true) {
 			if(imageRight == true && imageLeft == true) {
@@ -531,10 +667,11 @@ define(
 
 			sankey.nodes(jNodes).links(sLinks).layout(32);
 			
+			
 			var link = svg.append("g").selectAll(".link").data(sLinks).enter().append("path").attr("class", "link").attr("d", path).style("stroke-width",function(d) {
-			  return Math.max(1, d.dy);
-			}).sort(function(a, b) {
-			  return b.dy - a.dy;
+				return Math.max(1, d.dy);
+				}).sort(function(a, b) {
+				return b.dy - a.dy;
 			});
 			
 			//Color of Flow 
@@ -621,11 +758,34 @@ define(
 			});
 			
 			// Dessine les images
-			if(useImage == true && (imageLeft == true || imageRight == true)) {
+			if (useImage == true && (imageLeft == true || imageRight == true)) {
+			
+											
 				node.append("image")
 					.attr("xlink:href", function(d) {
-						var nameImage = d.name.substring(0, d.name.indexOf("~")).split('|')[0];
-						return urlImage + nameImage + ".png";
+						var nameImage = "";
+						var position = parseInt(d.name.split('~')[1].replace('end', qDim.length - 1));
+						
+						if (position == 0 || position == qDim.length - 1) { //seulement pour le premier et dernier
+ 					 						 
+							//if (useMeasure === true && imageLeft == true ) {
+							if (useMeasure === true) {
+								if (position == 0 && imageLeft == true) { //pour le premier c'est toujours photogauche
+									nameImage=d.sourceLinks[0].Photogauche;
+								}
+								if (position != 0 && imageRight == true) { //pour le dernier c'est toujours photodroite
+									nameImage=d.targetLinks[0].Photodroite;
+								}
+								
+							}
+							else {
+								nameImage=d.name.substring(0, d.name.indexOf("~")).split('|')[0];
+								nameImage = nameImage + "." + extensionImage;
+							}
+						
+						// extension dynamique
+						return urlImage + nameImage;
+					}
 					})
 					.attr("style", "background-color: transparent; opacity: 1;")
 					.attr("height", sizeImage + "px")
@@ -640,6 +800,7 @@ define(
 					})
 					.attr("x", sankey.nodeWidth() - (sizeImage + 17))
 					.attr("text-anchor", "start");
+				
 			}
 
 			//Node tooltip
