@@ -30,8 +30,8 @@ define(
 					qDimensions: [],
 					qMeasures: [],
 					qInitialDataFetch: [{
-						qWidth: 6,
-						qHeight: 1500
+						qWidth: 7,
+						qHeight: 1400
 					}]
 				},
 				selectionMode: "QUICK"
@@ -768,13 +768,15 @@ define(
 						
 						if (position == 0 || position == qDim.length - 1) { //seulement pour le premier et dernier
  					 						 
+							//if (useMeasure === true && imageLeft == true ) {
 							if (useMeasure === true) {
-								if (position == 0) { //pour le premier c'est toujours photogauche
+								if (position == 0 && imageLeft == true) { //pour le premier c'est toujours photogauche
 									nameImage=d.sourceLinks[0].Photogauche;
 								}
-								else {
+								if (position != 0 && imageRight == true) { //pour le dernier c'est toujours photodroite
 									nameImage=d.targetLinks[0].Photodroite;
 								}
+								
 							}
 							else {
 								nameImage=d.name.substring(0, d.name.indexOf("~")).split('|')[0];
