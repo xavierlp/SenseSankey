@@ -188,7 +188,7 @@ define(
 									useImage: {
 										ref: "useImage",
 										type: "boolean",
-										label : "Image for 1st & last dimensions",
+										label : "Display Image for 1st and last Dimension",
 										defaultValue: false,
 										},
 									useMeasure : {
@@ -404,11 +404,11 @@ define(
 			  var colorPersistence  = layout.colorPersistence;
 			  var useImage  		= layout.useImage;
 			  var useMeasure		= (layout.useMeasure === undefined ? true : layout.useMeasure);
-			  var imageRight		= layout.imageRight;
+			  var imageRight		= (layout.imageRight === undefined ? true : layout.imageRight);
 			  var imageLeft			= layout.imageLeft;
 			  var urlImage  		= layout.urlImage;
 			  var urlImageDesc  	= layout.urlImageDesc;
-			  var sizeImage			= layout.sizeImage;
+			  var sizeImage			= (layout.sizeImage === undefined ? 80 : layout.sizeImage);
 			  var extensionImage	= (layout.extensionImage === undefined ? "png" : layout.extensionImage);
 			  var dimImageRight		= (layout.dimImageRight === undefined ? "" : layout.dimImageRight);
 			  var offset 			= $element.offset();
@@ -757,10 +757,11 @@ define(
 			  return d3.rgb(d.color).darker(2);
 			});
 			
+			
 			// Dessine les images
 			if (useImage == true && (imageLeft == true || imageRight == true)) {
-			
-											
+			//	if ((imageLeft == true && position == 0) || (imageRight == true && position == qDim.length -1 ) ){
+													
 				node.append("image")
 					.attr("xlink:href", function(d) {
 						var nameImage = "";
@@ -778,9 +779,11 @@ define(
 								}
 								
 							}
-							else {
-								nameImage=d.name.substring(0, d.name.indexOf("~")).split('|')[0];
-								nameImage = nameImage + "." + extensionImage;
+							else { //on utilise les dimensions
+								if ((imageLeft == true && position == 0) || (imageRight == true && position == qDim.length -1 ) ){
+									nameImage=d.name.substring(0, d.name.indexOf("~")).split('|')[0];
+									nameImage = nameImage + "." + extensionImage;
+								}
 							}
 						
 						// extension dynamique
@@ -800,7 +803,7 @@ define(
 					})
 					.attr("x", sankey.nodeWidth() - (sizeImage + 17))
 					.attr("text-anchor", "start");
-				
+				//}
 			}
 
 			//Node tooltip
