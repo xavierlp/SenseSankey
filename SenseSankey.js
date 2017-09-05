@@ -298,7 +298,7 @@ define(
 								
 							managemoreDimension:{
 								type:"items",
-								label:"Manage 5 and more Dimensions",
+								label:"Manage 7 and more Dimensions",
 								items: {
 									moreDimension:{
 												ref: "moreDimension",
