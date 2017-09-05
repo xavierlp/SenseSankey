@@ -20,12 +20,13 @@ define(
 	function($, cssContent, Theme, md5) {
 		
 		'use strict';
-		Theme = JSON.parse(Theme); 
+		Theme = JSON.parse(Theme);
+		var SenseSankeyVersion = "2.31";
 
 		$( "<style>" ).html( cssContent ).appendTo( "head" );
 		return {
 			initialProperties: {
-				version: 2.31,
+				version: SenseSankeyVersion,
 				qHyperCubeDef: {
 					qDimensions: [],
 					qMeasures: [],
@@ -55,7 +56,7 @@ define(
 				
 								
 					SankeyGroup: {
-						label: "Sankey Settings v2.31",
+						label: "Sankey Settings v" + SenseSankeyVersion,
 						component:"expandable-items",
 						items : {
 							Flow:{
