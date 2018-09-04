@@ -13,6 +13,8 @@ Original radar chart extension, developped by John Park : <a href="http://branch
 Mike Bostock's Sankey chart : <a href="http://bost.ocks.org/mike/sankey">here</a><br>
 D3.js
 
+V2.32 Update code to be compatible with September 2018
+
 V2.31 Add Images at the start and then end of the flow
 		+ Manage 6 dimensions and more
 		
