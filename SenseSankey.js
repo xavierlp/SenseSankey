@@ -7,7 +7,6 @@ requirejs.config({
   }
 });
 
-//define(["jquery", "text!./style.css","extensions/SenseSankey/sankeymore"], function($, cssContent) {
 define(
 	[
 	"jquery", 
@@ -20,23 +19,19 @@ define(
 	function($, cssContent, Theme, md5) {
 		
 		'use strict';
-		Theme = JSON.parse(Theme);
-		var SenseSankeyVersion = "2.31";
-
+		Theme = JSON.parse(Theme); 
+		var SenseSankeyVersion = "2.32";
+		
 		$( "<style>" ).html( cssContent ).appendTo( "head" );
 		return {
 			initialProperties: {
-<<<<<<< HEAD
-				version: 2.32,
-=======
 				version: SenseSankeyVersion,
->>>>>>> origin/master
 				qHyperCubeDef: {
 					qDimensions: [],
 					qMeasures: [],
 					qInitialDataFetch: [{
-						qWidth: 7,
-						qHeight: 1400
+						qWidth: 6,
+						qHeight: 1500
 					}]
 				},
 				selectionMode: "QUICK"
@@ -52,7 +47,7 @@ define(
 					measures: {
 						uses: "measures",
 						min: 1,
-						max: 3
+						max: 1
 					},
 					//sorting: {
 					//	uses: "sorting"
@@ -102,8 +97,8 @@ define(
 										label:"<->"
 										},
 										{
-										value: " → ",
-										label: " → "
+										value: " ? ",
+										label: " ? "
 										},
 									],
 									defaultValue: " - "
@@ -193,42 +188,29 @@ define(
 									useImage: {
 										ref: "useImage",
 										type: "boolean",
-										label : "Display Image for 1st and last Dimension",
+										label : "Image for 1st & last dimensions",
 										defaultValue: false,
 										},
-									useMeasure : {
-										ref: "useMeasure",
-										type: "boolean",
-										component: "buttongroup",
-										label: "Dimension or Measure",
-										options: [
-										{
-											value: false,
-											label: "Dimensions",
-											tooltip: "1st and last dimensions will be used to build the image"
-										},
-										{
-											value: true,
-											label: "Measures",
-											tooltip: "2nd and 3rd Measure contain the image"
-										}],
-										defaultValue: true,
-										show : function(layout) {return layout.useImage}
+									customImageName:{
+										ref:"customImageName",
+										type:"boolean",
+										label: "Use custom fields",
+										defaultValue: false, 
+										show: function(layout) {return layout.useImage}
 									},
-									
-									dimensionImageDescDim:{
-										ref: "dimensionImageDescD",
+									dimImageRight:{
+										ref:"dimImageRight",
+										type: "string",
+										label: "Dimension which contain the image on right",
+										defaultValue: "",
+										show: function(layout)  { return layout.customImageName}
+									},
+									dimensionImageDesc:{
+										ref: "dimensionImageDesc",
 										type: "string",
 										component: "text",
-										label: "1st and last dimensions will be used to build the image",
-										show: function(layout) { if( layout.useMeasure == true ){ return false } else { return true } }
-									},
-									dimensionImageDescMeasure:{
-										ref: "dimensionImageDescM",
-										type: "string",
-										component: "text",
-										label: "2nd and 3rd Measure contain the image",
-										show: function(layout) { if( layout.useMeasure == true ){ return true } else { return false } }
+										label: "Note: The value of the field must include the file extension.",
+										show: function(layout)  { return layout.customImageName}
 									},
 									
 									extensionImage:{
@@ -238,27 +220,11 @@ define(
 										defaultValue: "png",
 										show: function(layout)  { if (layout.useImage) 
 													{ 
-												if (layout.useMeasure) { return false } else { return true } 
+												if (layout.customImageName) { return false } else { return true } 
 												}
 										}
 									},
-									imageLeft:{
-										ref: "imageLeft",
-										component: "switch",
-										type: "boolean",
-										label: "Image Left",
-										translation: "Use image left",
-										defaultValue: true,
-										trueOption: {
-										  value: true,
-										  translation: "properties.on"
-										},
-										falseOption: {
-										  value: false,
-										  translation: "properties.off"
-										},
-										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
-									},
+									
 									
 									imageRight:{
 										ref: "imageRight",
@@ -277,7 +243,23 @@ define(
 										},
 										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
 									},
-									
+									imageLeft:{
+										ref: "imageLeft",
+										component: "switch",
+										type: "boolean",
+										label: "Image Left",
+										translation: "Use image left",
+										defaultValue: true,
+										trueOption: {
+										  value: true,
+										  translation: "properties.on"
+										},
+										falseOption: {
+										  value: false,
+										  translation: "properties.off"
+										},
+										show: function(layout)  { if( layout.useImage ){ return true } else { return false } }
+									},
 									urlImage:{
 										ref: "urlImage",
 										type: "string",
@@ -302,7 +284,7 @@ define(
 								
 							managemoreDimension:{
 								type:"items",
-								label:"Manage 7 and more Dimensions",
+								label:"Manage 5 and more Dimensions",
 								items: {
 									moreDimension:{
 												ref: "moreDimension",
@@ -408,18 +390,15 @@ define(
 			  var displayPalette    = layout.displayPalette;
 			  var colorPersistence  = layout.colorPersistence;
 			  var useImage  		= layout.useImage;
-			  var useMeasure		= (layout.useMeasure === undefined ? true : layout.useMeasure);
-			  var imageRight		= (layout.imageRight === undefined ? true : layout.imageRight);
+			  var imageRight		= layout.imageRight;
 			  var imageLeft			= layout.imageLeft;
 			  var urlImage  		= layout.urlImage;
 			  var urlImageDesc  	= layout.urlImageDesc;
-			  var sizeImage			= (layout.sizeImage === undefined ? 80 : layout.sizeImage);
+			  var sizeImage			= layout.sizeImage;
 			  var extensionImage	= (layout.extensionImage === undefined ? "png" : layout.extensionImage);
 			  var dimImageRight		= (layout.dimImageRight === undefined ? "" : layout.dimImageRight);
 			  var offset 			= $element.offset();
 			  var separator			= (layout.separateur === undefined ? "§" : layout.separateur);
-			  var nbImageDrawn		= 0;
-			  
 
 			 if (displayPalette === "D3-20") {
 				var colours = ['#1f77b4','#aec7e8','#ff7f0e','#ffbb78','#2ca02c','#98df8a','#d62728','#ff9896','#9467bd','#c5b0d5','#8c564b',
@@ -453,52 +432,24 @@ define(
 				});
 			  
 			  
-			var divName 	= layout.qInfo.qId;
-			var qMatrix 	= qData.qMatrix.sort();
-			var source 		= qMatrix.map(function(d) {
+			var divName = layout.qInfo.qId;
+			var qMatrix = qData.qMatrix.sort();
+			var source = qMatrix.map(function(d) {
 				  
-			var path 		= ""; 
-			var sep 		= ""; 
-			var nbDimension = 0;
-			var nbDimension = qDim.length;
-			var nbMesures 	= qMatrix[0].length- nbDimension;
-			var nbTotal 	= nbMesures+nbDimension;
-		//for (var i = 0; i < d.length - 1; i++) {
-			
-			for (var i = 0; i < nbDimension ; i++) {
+			var path = ""; 
+			var sep = ""; 
+			for (var i = 0; i < d.length - 1; i++) {
 				path += sep + (d[i].qText.replace('|', ' ')) + '|' + (d[i].qElemNumber); 
 				sep = separator;
 			}
-			
-						
-			switch (nbMesures)
-			{
-				case 3: 
-				return {
-					"Path": path,
-					"Frequency": d[nbDimension].qNum,
-					"Photogauche": d[nbTotal-2].qText,
-					"Photodroite": d[nbTotal-1].qText
-					}
-				break;	
-				case 2:
-				return {
-					"Path": path,
-					"Frequency": d[nbDimension].qNum,
-					"Photogauche": d[nbTotal-1].qText
+					
+			return {
+				  //"Path":d[0].qText,
+				  "Path": path,
+				  "Frequency": d[d.length - 1].qNum
 				}
-				break;
-				default:
-				return {
-					"Path": path,
-					"Frequency": d[nbDimension].qNum
-				}
-			}
-				
-			});
-			
-
-			var id = "sk_"+ layout.qInfo.qId;
+			   });
+			  var id = "sk_"+ layout.qInfo.qId;
 					  
 			  if (document.getElementById(id)) {
 				 $("#" + id).empty();
@@ -561,12 +512,6 @@ define(
 			  //var row = d;
 			  var path = d.Path
 			  var val = parseFloat(d.Frequency);
-			  
-			  if (useMeasure == true) {
-				   var photog = d.Photogauche;
-				   var photod = d.Photodroite;
-			  }
-			 
 			  if(val > 0) {
 			  var tArr = path.split(separator);  
 		  
@@ -599,16 +544,7 @@ define(
 
 								}
 							});
-							if ((tFlag == "no") &&  (useMeasure == true)) {
-								sLinks.push({
-									"source" : cS,
-									"target" : cT,
-									"value" : val,
-									"Photogauche" : photog,
-									"Photodroite" : photod
-								});
-							}
-							if ((tFlag == "no") &&  (useMeasure == false)) {
+							if (tFlag == "no") {
 								sLinks.push({
 									"source" : cS,
 									"target" : cT,
@@ -621,8 +557,7 @@ define(
 				}
 			}
 			});
-			
-				
+		
 		  // Ajuste le graph si image droite ou gauche
 		  if(useImage == true) {
 			if(imageRight == true && imageLeft == true) {
@@ -672,11 +607,10 @@ define(
 
 			sankey.nodes(jNodes).links(sLinks).layout(32);
 			
-			
 			var link = svg.append("g").selectAll(".link").data(sLinks).enter().append("path").attr("class", "link").attr("d", path).style("stroke-width",function(d) {
-				return Math.max(1, d.dy);
-				}).sort(function(a, b) {
-				return b.dy - a.dy;
+			  return Math.max(1, d.dy);
+			}).sort(function(a, b) {
+			  return b.dy - a.dy;
 			});
 			
 			//Color of Flow 
@@ -762,38 +696,16 @@ define(
 			  return d3.rgb(d.color).darker(2);
 			});
 			
-			
 			// Dessine les images
-			if (useImage == true && (imageLeft == true || imageRight == true)) {
-			//	if ((imageLeft == true && position == 0) || (imageRight == true && position == qDim.length -1 ) ){
-													
+			if(useImage == true && (imageLeft == true || imageRight == true)) {
 				node.append("image")
 					.attr("xlink:href", function(d) {
-						var nameImage = "";
-						var position = parseInt(d.name.split('~')[1].replace('end', qDim.length - 1));
-						
-						if (position == 0 || position == qDim.length - 1) { //seulement pour le premier et dernier
- 					 						 
-							//if (useMeasure === true && imageLeft == true ) {
-							if (useMeasure === true) {
-								if (position == 0 && imageLeft == true) { //pour le premier c'est toujours photogauche
-									nameImage=d.sourceLinks[0].Photogauche;
-								}
-								if (position != 0 && imageRight == true) { //pour le dernier c'est toujours photodroite
-									nameImage=d.targetLinks[0].Photodroite;
-								}
-								
-							}
-							else { //on utilise les dimensions
-								if ((imageLeft == true && position == 0) || (imageRight == true && position == qDim.length -1 ) ){
-									nameImage=d.name.substring(0, d.name.indexOf("~")).split('|')[0];
-									nameImage = nameImage + "." + extensionImage;
-								}
-							}
-						
+						var nameImage = dimensionImage;
+						if (nameImage === "") {
+							nameImage = d.name.substring(0, d.name.indexOf("~")).split('|')[0] + "." + extensionImage;
+						}
 						// extension dynamique
 						return urlImage + nameImage;
-					}
 					})
 					.attr("style", "background-color: transparent; opacity: 1;")
 					.attr("height", sizeImage + "px")
@@ -808,7 +720,6 @@ define(
 					})
 					.attr("x", sankey.nodeWidth() - (sizeImage + 17))
 					.attr("text-anchor", "start");
-				//}
 			}
 
 			//Node tooltip
