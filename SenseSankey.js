@@ -20,7 +20,7 @@ define(
 		
 		'use strict';
 		Theme = JSON.parse(Theme); 
-		var SenseSankeyVersion = "2.32";
+		var SenseSankeyVersion = "2.33";
 		
 		$( "<style>" ).html( cssContent ).appendTo( "head" );
 		return {
