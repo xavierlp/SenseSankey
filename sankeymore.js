@@ -103,6 +103,10 @@ senseSankey = function() {
         d3.sum(node.sourceLinks, value),
         d3.sum(node.targetLinks, value)
       );
+      node.absValue = Math.max(
+        d3.sum(node.sourceLinks, absValue),
+        d3.sum(node.targetLinks, absValue)
+      );
     });
   }
  
@@ -174,18 +178,18 @@ senseSankey = function() {
  
     function initializeNodeDepth() {
       var ky = d3.min(nodesByBreadth, function(nodes) {
-        return (size[1] - (nodes.length - 1) * nodePadding) / d3.sum(nodes, value);
+        return (size[1] - (nodes.length - 1) * nodePadding) / d3.sum(nodes, absValue);
       });
  
       nodesByBreadth.forEach(function(nodes) {
         nodes.forEach(function(node, i) {
           node.y = i;
-          node.dy = node.value * ky;
+          node.dy = node.absValue * ky;
         });
       });
  
       links.forEach(function(link) {
-        link.dy = link.value * ky;
+        link.dy = link.absValue * ky;
       });
     }
  
@@ -193,14 +197,14 @@ senseSankey = function() {
       nodesByBreadth.forEach(function(nodes, breadth) {
         nodes.forEach(function(node) {
           if (node.targetLinks.length) {
-            var y = d3.sum(node.targetLinks, weightedSource) / d3.sum(node.targetLinks, value);
+            var y = d3.sum(node.targetLinks, weightedSource) / d3.sum(node.targetLinks, absValue);
             node.y += (y - center(node)) * alpha;
           }
         });
       });
  
       function weightedSource(link) {
-        return center(link.source) * link.value;
+        return center(link.source) * link.absValue;
       }
     }
  
@@ -208,14 +212,14 @@ senseSankey = function() {
       nodesByBreadth.slice().reverse().forEach(function(nodes) {
         nodes.forEach(function(node) {
           if (node.sourceLinks.length) {
-            var y = d3.sum(node.sourceLinks, weightedTarget) / d3.sum(node.sourceLinks, value);
+            var y = d3.sum(node.sourceLinks, weightedTarget) / d3.sum(node.sourceLinks, absValue);
             node.y += (y - center(node)) * alpha;
           }
         });
       });
  
       function weightedTarget(link) {
-        return center(link.target) * link.value;
+        return center(link.target) * link.absValue;
       }
     }
  
@@ -289,6 +293,10 @@ senseSankey = function() {
  
   function value(link) {
     return link.value;
+  }
+ 
+  function absValue(link) {
+    return link.absValue;
   }
  
   return sankey;

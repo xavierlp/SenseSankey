@@ -81,6 +81,16 @@ define(
 									defaultValue: "#999999"
 									},
 									
+								flowColorNegative:{
+									type: "string",
+									component: "color-picker",
+									expression: "optional",
+									label: "Color Negative Flow",
+									ref: "flowColorNegative",
+									dualOutput: true,
+									defaultValue: "#f99999"
+									},
+									
 								Separateur:{
 									ref: "displaySeparateur",
 									type: "string",
@@ -424,6 +434,7 @@ define(
 					
 			//var flowColor = (layout.flowChoice == 2) ? layout.flowColorCustom : Theme.palette[layout.flowColor];
 			var flowColor = layout.flowColorCustom.color;
+			var flowColorNegative = layout.flowColorNegative && layout.flowColorNegative.color || '#f99999';  // flowColor;
 			  
 			var qData = layout.qHyperCube.qDataPages[0];
 			  // create a new array that contains the dimension labels
@@ -541,14 +552,15 @@ define(
 									////console.info(this);
 									tFlag = "yes";
 									v.value = v.value + val;
-
+									v.absValue = v.absValue + Math.abs(val);
 								}
 							});
 							if (tFlag == "no") {
 								sLinks.push({
 									"source" : cS,
 									"target" : cT,
-									"value" : val
+									"value" : val,
+									"absValue" : Math.abs(val)
 								});
 							}
 
@@ -608,15 +620,15 @@ define(
 			sankey.nodes(jNodes).links(sLinks).layout(32);
 			
 			var link = svg.append("g").selectAll(".link").data(sLinks).enter().append("path").attr("class", "link").attr("d", path).style("stroke-width",function(d) {
+				// Minimum width
 			  return Math.max(1, d.dy);
+			  }).style("stroke",function(d) {
+				// Color of Flow 
+				return (d.value < 0 ? flowColorNegative : flowColor);
 			}).sort(function(a, b) {
 			  return b.dy - a.dy;
 			});
 			
-			//Color of Flow 
-			link.style('stroke', flowColor);
-
-
 			$('.ttip').remove(); //We make sure there isn't any other tooltip div in the doom
 
 			// Create tooltip div 
