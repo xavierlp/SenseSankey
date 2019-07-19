@@ -13,7 +13,9 @@ Original radar chart extension, developped by John Park : <a href="http://branch
 Mike Bostock's Sankey chart : <a href="http://bost.ocks.org/mike/sankey">here</a><br>
 D3.js
 
-V2.33 Added support for negative values by vbakke
+V2.34 Added export support by [julmot](https://github.com/julmot)
+
+V2.33 Added support for negative values by [vbakke](https://github.com/vbakke)
 
 V2.32 Update code to be compatible with September 2018
 
