@@ -337,12 +337,11 @@ define(
 				}
 			},
 			snapshot: {
-						canTakeSnapshot: true
-					},
-				
-			
-			
-
+				canTakeSnapshot: true
+			},
+			support : {
+				export: true
+			},
 			paint: function ( $element, layout ) {
 				
 			// Fonction format pop-up		
